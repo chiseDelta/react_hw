@@ -1,7 +1,11 @@
+import {Posts} from "./components/PostsBlock/Posts";
+import {Launches} from "./components/SpaceXBlock/Launches";
+
 const App = () => {
     return (
         <div>
-            App
+            {/*<Posts/>*/}
+            <Launches/>
         </div>
     );
 };
