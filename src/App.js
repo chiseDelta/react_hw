@@ -1,7 +1,9 @@
+import {UsersBlock} from "./components/UsersBlock/UsersBlock";
+
 const App = () => {
     return (
         <div>
-            App
+            <UsersBlock/>
         </div>
     );
 };
