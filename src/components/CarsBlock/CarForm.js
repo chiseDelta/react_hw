@@ -1,8 +1,18 @@
+import {useEffect} from "react";
 import {useForm} from "react-hook-form";
+
 import {carService} from "../../services/carService";
 
-const CarForm = ({setCarsRefresh}) => {
+const CarForm = ({setCarsRefresh, carUpdate, setCarUpdate}) => {
     const {register, reset, handleSubmit, formState: {isValid, errors}, setValue} = useForm({mode: 'all'})
+
+    useEffect(() => {
+        if (carUpdate) {
+            setValue('brand', carUpdate.brand, {shouldValidate: true})
+            setValue('price', carUpdate.price, {shouldValidate: true})
+            setValue('year', carUpdate.year, {shouldValidate: true})
+        }
+    }, [carUpdate]);
 
     const save = async (car) => {
         await carService.create(car)
@@ -10,9 +20,16 @@ const CarForm = ({setCarsRefresh}) => {
         reset()
     }
 
+    const update = async (car) => {
+        await carService.updateById(carUpdate.id, car)
+        setCarsRefresh(prev => !prev)
+        setCarUpdate(null)
+        reset()
+    }
+
     return (
         <div>
-            <form onSubmit={handleSubmit(save)}>
+            <form onSubmit={handleSubmit(carUpdate ? update : save)}>
                 <input type="text" placeholder={'brand'} {...register('brand', {
                     required: true,
                     pattern: /^[a-zA-Zа-яА-яёЁіІїЇєЄҐґ]{1,20}$/
@@ -29,7 +46,7 @@ const CarForm = ({setCarsRefresh}) => {
                     max: {value: new Date().getFullYear(), message: 'Current year MAXIMUM'},
                     min: {value: 1990, message: '1990 year MINIMUM'}
                 })}/>
-                <button disabled={!isValid}>save</button>
+                <button disabled={!isValid}>{carUpdate ? 'update' : 'save'}</button>
                 {errors.brand && <div>{errors.brand.message}</div>}
                 {errors.price && <div>{errors.price.message}</div>}
                 {errors.year && <div>{errors.year.message}</div>}
